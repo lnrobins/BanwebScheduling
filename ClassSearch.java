@@ -25,11 +25,13 @@ public class ClassSearch {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
 			String line;
 			arraylist = new ArrayList<String[]>();
-			int x = 0;
 			while ((line = reader.readLine()) != null) {
-				String[] stringArray = line.split(",");
-				arraylist.set(x, stringArray);
-				x++;
+				String[] stringArray = line.split(",", 20);
+				if(stringArray[0].length() > 0) {
+					if(stringArray[0].charAt(0) == '8' ) {
+						arraylist.add(stringArray);
+					}	
+				}
 			}
             
 			return file;
@@ -41,18 +43,13 @@ public class ClassSearch {
 	}
     
 	String search(int CRN) {
+		getFile();
 		for( String[] e: arraylist) {
 			if(Integer.parseInt(e[0]) == CRN) {
 				return e[2];
 			}
 			
 		}
-		return "";
-	}
-
-	public static void main(String args[]) {
-		ClassSearch cs = new ClassSearch();
-		System.out.println(cs.search(85031));
-	}
-	
+		return "No such course exists";
+	}	
 }
