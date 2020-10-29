@@ -13,7 +13,7 @@ public class Classes_db_Query {
 		int course = 0;
 		
 		try {
-			String url = "jdbc:sqlite:C:/Users/waugh/Documents/sqlite/classes_db";
+			String url = "jdbc:sqlite:C:/Users/waugh/Documents/sqlite/updated_classes";
 			conn = DriverManager.getConnection(url);
 			Statement statement = conn.createStatement();
 			
@@ -23,6 +23,40 @@ public class Classes_db_Query {
 				if( rs.getInt("CRN") == CRN ) {
 					course = rs.getInt("course");
 				}
+			}
+			
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+			
+		} finally {
+			try {
+				if(conn != null) {
+					conn.close();
+				}
+			} catch (SQLException ex) {
+				System.out.println(ex.getMessage());
+			}
+		}
+		
+		return course;
+	}
+	
+	public static Object[] query(String query) {
+		Connection conn = null;
+		Object[] course = new Object[10000];
+		course[0] = 0;
+		
+		try {
+			String url = "jdbc:sqlite:C:/Users/waugh/Documents/sqlite/updated_classes";
+			conn = DriverManager.getConnection(url);
+			Statement statement = conn.createStatement();
+			
+			
+			ResultSet rs = statement.executeQuery(query);
+			int i = 0;
+			while(rs.next() && i < course.length) {
+				course[i] = rs.getInt("CRN");
+				i++;
 			}
 			
 		} catch (SQLException e) {
