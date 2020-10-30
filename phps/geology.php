@@ -7,7 +7,6 @@ $result = $db->query($sql);
 echo "<table>";
 echo "<tableborder='1'>";
 echo "<tr>";
-echo "<th>	</th>";
 echo "<th>CRN</th>";
 echo "<th>Subject</th>";
 echo "<th>Course</th>";
@@ -28,7 +27,6 @@ echo "</tr>";
 echo "</br>";
 while($row=$result->fetchArray(SQLITE3_ASSOC)){	 	
 	echo "<tr>";
-	echo "<th><button type='button' onclick='alert('Class Added')'>Add Class</button>";
 	echo "<td>";
 	echo $row['CRN'];
 	echo "</td>";
