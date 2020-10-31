@@ -7,6 +7,7 @@ $result = $db->query($sql);
 echo "<table>";
 echo "<tableborder='1'>";
 echo "<tr>";
+echo "<th><form action='Home.html'> <label for='crn'>CRN:<br> <input type'text' id='crn' name='crn'><br> <input type='submit' name='Add Course'></th>";
 echo "<th>CRN</th>";
 echo "<th>Subject</th>";
 echo "<th>Course</th>";
