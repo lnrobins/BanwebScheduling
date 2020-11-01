@@ -2,7 +2,7 @@
 <body>
 <?php
 $db = new SQLITE3('updated_classes');
-$sql = "SELECT * from classes where subject = 'GE'";
+$sql = "SELECT * from classes where subject = 'MKT'";
 $result = $db->query($sql);
 echo "<form action='Home.html'><br><br><br><br> <br><br><br><br> <br><br><br><br>&nbsp&nbsp<label for='crn'>CRN: <input type'text' id='crn' name='crn'> <input type='submit' name='Add Course'>";
 echo "<table>";
@@ -82,7 +82,6 @@ while($row=$result->fetchArray(SQLITE3_ASSOC)){
 }
 	echo "</table>";
 ?>
-
 <body style="background-color:white;">
 
 	<div class="header">
@@ -117,7 +116,7 @@ while($row=$result->fetchArray(SQLITE3_ASSOC)){
 	  padding-left: 0px;
 	  padding-bottom: 15px;
 	  position: relative;
-	  bottom: 5650px;
+	  bottom: 615px;
 	}
 
 
@@ -127,7 +126,7 @@ while($row=$result->fetchArray(SQLITE3_ASSOC)){
 	  background-color: #292828;
 	  overflow: auto;
 	  position: relative;
-	  bottom: 5650px;
+	  bottom: 615px;
 	}
 
 	/* Navigation links */
@@ -176,7 +175,7 @@ while($row=$result->fetchArray(SQLITE3_ASSOC)){
 	
 	table{
 	 position: relative; 
-	 top:-1270px; 
+	 top:-90px; 
 	 left:180px; 
 	 width: 80%;
 	}
