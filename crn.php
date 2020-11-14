@@ -3,9 +3,8 @@
 <body>
 <?php
 $db = new SQLITE3('updated_classes');
-$sql = "SELECT * from classes where subject = '".$_GET['button']."'";
+$sql = "SELECT * from classes where CRN ='" . $_GET['crn'] . "'";
 $result = $db->query($sql);
-
 echo "<form action='Home.html'><br><br><br><br> <br><br><br><br> <br><br><br><br>&nbsp&nbsp<label for='crn'>CRN: <input type'text' id='crn' name='crn'> <input type='submit' name='Add Course'>";
 echo "<table>";
 echo "<tableborder='1'>";
@@ -93,10 +92,9 @@ while($row=$result->fetchArray(SQLITE3_ASSOC)){
 	echo "</br>";
 	echo "</br>";
 	echo "</br>";
-	
+
 	echo "</table>";
 ?>
-
 <body style="background-color:white;">
 
 	<div class="header">
@@ -110,6 +108,6 @@ while($row=$result->fetchArray(SQLITE3_ASSOC)){
 	  <a href="CourseList.html"style="font-family:Arial">Course List</a>
 	  <a href="About.html"style="font-family:Arial">About</a>
 	</div>
-	
+
 </body>
 </html>
