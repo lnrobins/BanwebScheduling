@@ -30,145 +30,45 @@ $db = new SQLITE3('updated_classes');
 $sql = "SELECT * from classes where CRN ='" . $_GET['crn'] . "'";
 $result = $db->query($sql);
 
+include 'conflictNotification.php';
 
-
-function m($row){
+function day($row, $day, $time){
 	
-	$arr = str_split($row['days']);
-	for($i = 0; $i< sizeof($arr); $i++){
-	
-if($arr[$i] == "M" ){	
-	    	
-	echo $row['CRN'];
-	echo " ";
-	echo $row['section'];
-	echo " ";
-	echo $row['credits'];
-	echo " ";
-	echo $row['title'];
-	echo " ";
-	echo $row['instructor'];
-	echo " ";
-	echo $row['date'];
-	echo " ";
-	echo $row['location'];
-	echo " ";
+	if( $row['time'] != "TBA" ) {
+		
+		$times = $row['time'];
+
+		$timeArray = explode("-", $times);
+
+		$startTimeArray = explode(" ", $timeArray[0]);
+		$startTime = getTime($startTimeArray);
+		$startTime = floor($startTime/4);
+
+		$endTimeArray = explode(" ", $timeArray[1]);
+		$endTime = getTime($endTimeArray);
+		$endTime = ceil($endTime/4);		
+
+		$arr = str_split($row['days']);
+		for($i = 0; $i< sizeof($arr); $i++){
+			$classList = array();
+			if(conflicts($classList, $row['CRN']) && $arr[$i] == $day && $time >= $startTime && $time < $endTime ){
+				echo $row['CRN'];
+				echo " ";
+				echo $row['section'];
+				echo " ";
+				echo $row['credits'];
+				echo " ";
+				echo $row['title'];
+				echo " ";
+				echo $row['instructor'];
+				echo " ";
+				echo $row['date'];
+				echo " ";
+				echo $row['location'];
+			}
+		}
+	}
 }
-}
-
-}
-
-
-
-
-function t($row){
-	
-	$arr = str_split($row['days']);
-	for($i = 0; $i< sizeof($arr); $i++){
-	
-if($arr[$i] == "T" ){	
-	    	
-	echo $row['CRN'];
-	echo " ";
-	echo $row['section'];
-	echo " ";
-	echo $row['credits'];
-	echo " ";
-	echo $row['title'];
-	echo " ";
-	echo $row['instructor'];
-	echo " ";
-	echo $row['date'];
-	echo " ";
-	echo $row['location'];
-	echo " ";
-}
-}
-
-}
-
-
-function w($row){
-	
-	$arr = str_split($row['days']);
-	for($i = 0; $i< sizeof($arr); $i++){
-	
-if($arr[$i] == "W" ){	
-	    	
-	echo $row['CRN'];
-	echo " ";
-	echo $row['section'];
-	echo " ";
-	echo $row['credits'];
-	echo " ";
-	echo $row['title'];
-	echo " ";
-	echo $row['instructor'];
-	echo " ";
-	echo $row['date'];
-	echo " ";
-	echo $row['location'];
-	echo " ";
-}
-}
-
-}
-
-
-function r($row){
-	
-	$arr = str_split($row['days']);
-	for($i = 0; $i< sizeof($arr); $i++){
-	
-if($arr[$i] == "R" ){	
-	    	
-	echo $row['CRN'];
-	echo " ";
-	echo $row['section'];
-	echo " ";
-	echo $row['credits'];
-	echo " ";
-	echo $row['title'];
-	echo " ";
-	echo $row['instructor'];
-	echo " ";
-	echo $row['date'];
-	echo " ";
-	echo $row['location'];
-	echo " ";
-}
-}
-
-}
-
-
-function f($row){
-	
-	$arr = str_split($row['days']);
-	for($i = 0; $i< sizeof($arr); $i++){
-	
-if($arr[$i] == "F" ){	
-	    	
-	echo $row['CRN'];
-	echo " ";
-	echo $row['section'];
-	echo " ";
-	echo $row['credits'];
-	echo " ";
-	echo $row['title'];
-	echo " ";
-	echo $row['instructor'];
-	echo " ";
-	echo $row['date'];
-	echo " ";
-	echo $row['location'];
-	echo " ";
-}
-}
-
-}
-
-
 
 echo"<table>";
 	
@@ -183,541 +83,670 @@ echo"<table>";
 	echo "<th>Friday</th>";
 	echo "<th>Saturday</th>";
 	echo "</tr>";
+	
 	echo "<tr>";
-	echo "<td>8:00 AM</td>";
-	echo "<td></td>";
-	echo "<td>";
+		echo "<td>6:00 AM</td>";
+		echo "<td></td>";
+		
+		echo "<td>";
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "M", 6);	
+		}
+		echo"</td>";
 
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	m($row);	
-	}
-echo"</td>";
-echo "<td>";	
-	while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	t($row);	
-	}
-echo"</td>";
-echo "<td>";
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	w($row);	
-	}
-echo"</td>";
-echo "<td>";	    
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	r($row);	
-	}
-echo"</td>";
-echo "<td>";	
+		echo "<td>";	
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "T", 6);	
+		}
+		echo"</td>";
+
+		echo "<td>";
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row,"W", 6);	
+		}
+		echo"</td>";
+
+		echo "<td>";	    
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "R", 6);	
+		}
+		echo"</td>";
+
+		echo "<td>";	
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "F", 6);	
+		}
+		echo"</td>";
+
+		echo "<td>";
+		echo"</td>";
+		
+	echo "</tr>";
 	
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	f($row);	
-	}
-echo"</td>";
-echo "<td>";
-echo"</td>";
+	echo "<tr>";
+		echo "<td>7:00 AM</td>";
+		echo "<td></td>";
 		
-		echo "</tr>";
-		
+		echo "<td>";
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "M", 7);	
+		}
+		echo"</td>";
 
-		echo "<tr>";
+		echo "<td>";	
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "T", 7);	
+		}
+		echo"</td>";
+
+		echo "<td>";
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row,"W", 7);	
+		}
+		echo"</td>";
+
+		echo "<td>";	    
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "R", 7);	
+		}
+		echo"</td>";
+
+		echo "<td>";	
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "F", 7);	
+		}
+		echo"</td>";
+
+		echo "<td>";
+		echo"</td>";
+		
+	echo "</tr>";
+
+	echo "<tr>";
+		echo "<td>8:00 AM</td>";
+		echo "<td></td>";
+		
+		echo "<td>";
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "M", 8);	
+		}
+		echo"</td>";
+
+		echo "<td>";	
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "T", 8);	
+		}
+		echo"</td>";
+
+		echo "<td>";
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row,"W", 8);	
+		}
+		echo"</td>";
+
+		echo "<td>";	    
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "R", 8);	
+		}
+		echo"</td>";
+
+		echo "<td>";	
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "F", 8);	
+		}
+		echo"</td>";
+
+		echo "<td>";
+		echo"</td>";
+		
+	echo "</tr>";
+
+	echo "<tr>";
 		echo "<td>9:00 AM</td>";
-	echo "<td></td>";
-	echo "<td>";
+		echo "<td></td>";
+		
+		echo "<td>";
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "M", 9);	
+		}
+		echo"</td>";
 
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	m($row);	
-	}
-echo"</td>";
-echo "<td>";	
-	while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	t($row);	
-	}
-echo"</td>";
-echo "<td>";
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	w($row);	
-	}
-echo"</td>";
-echo "<td>";	    
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	r($row);	
-	}
-echo"</td>";
-echo "<td>";	
-	
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	f($row);	
-	}
-echo"</td>";
-echo "<td>";
-echo"</td>";
-		
-		echo "</tr>";
-		
+		echo "<td>";	
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "T", 9);	
+		}
+		echo"</td>";
 
-		echo "<tr>";
-	    	echo "<td>10:00 AM</td>";
-	echo "<td></td>";
-	echo "<td>";
+		echo "<td>";
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row,"W", 9);	
+		}
+		echo"</td>";
 
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	m($row);	
-	}
-echo"</td>";
-echo "<td>";	
-	while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	t($row);	
-	}
-echo"</td>";
-echo "<td>";
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	w($row);	
-	}
-echo"</td>";
-echo "<td>";	    
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	r($row);	
-	}
-echo"</td>";
-echo "<td>";	
-	
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	f($row);	
-	}
-echo"</td>";
-echo "<td>";
-echo"</td>";
-		
-		echo "</tr>";
-		
+		echo "<td>";	    
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "R", 9);	
+		}
+		echo"</td>";
 
-		echo "<tr>";
-	    	echo "<td>11:00 AM</td>";
-	echo "<td></td>";
-	echo "<td>";
+		echo "<td>";	
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "F", 9);	
+		}
+		echo"</td>";
 
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	m($row);	
-	}
-echo"</td>";
-echo "<td>";	
-	while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	t($row);	
-	}
-echo"</td>";
-echo "<td>";
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	w($row);	
-	}
-echo"</td>";
-echo "<td>";	    
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	r($row);	
-	}
-echo"</td>";
-echo "<td>";	
-	
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	f($row);	
-	}
-echo"</td>";
-echo "<td>";
-echo"</td>";
+		echo "<td>";
+		echo"</td>";
 		
-		echo "</tr>";
-		
+	echo "</tr>";
 
-		echo "<tr>";
-	    	echo "<td>12:00 PM</td>";
-	echo "<td></td>";
-	echo "<td>";
+	echo "<tr>";
+		echo "<td>10:00 AM</td>";
+		echo "<td></td>";
+		
+		echo "<td>";
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "M", 10);	
+		}
+		echo"</td>";
 
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	m($row);	
-	}
-echo"</td>";
-echo "<td>";	
-	while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	t($row);	
-	}
-echo"</td>";
-echo "<td>";
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	w($row);	
-	}
-echo"</td>";
-echo "<td>";	    
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	r($row);	
-	}
-echo"</td>";
-echo "<td>";	
-	
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	f($row);	
-	}
-echo"</td>";
-echo "<td>";
-echo"</td>";
-		
-		echo "</tr>";
-		
+		echo "<td>";	
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "T", 10);	
+		}
+		echo"</td>";
 
-		echo "<tr>";
-			
-		echo "</tr>";
-		echo "<tr>";
-	    	echo "<td>1:00 AM</td>";
-	echo "<td></td>";
-	echo "<td>";
+		echo "<td>";
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row,"W", 10);	
+		}
+		echo"</td>";
 
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	m($row);	
-	}
-echo"</td>";
-echo "<td>";	
-	while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	t($row);	
-	}
-echo"</td>";
-echo "<td>";
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	w($row);	
-	}
-echo"</td>";
-echo "<td>";	    
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	r($row);	
-	}
-echo"</td>";
-echo "<td>";	
-	
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	f($row);	
-	}
-echo"</td>";
-echo "<td>";
-echo"</td>";
-		
-		echo "</tr>";
-		
+		echo "<td>";	    
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "R", 10);	
+		}
+		echo"</td>";
 
-		echo "<tr>";	
-			
-		echo "</tr>";
-		echo "<tr>";
-	    echo "<td>2:00 AM</td>";
-	echo "<td></td>";
-	echo "<td>";
+		echo "<td>";	
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "F", 10);	
+		}
+		echo"</td>";
 
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	m($row);	
-	}
-echo"</td>";
-echo "<td>";	
-	while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	t($row);	
-	}
-echo"</td>";
-echo "<td>";
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	w($row);	
-	}
-echo"</td>";
-echo "<td>";	    
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	r($row);	
-	}
-echo"</td>";
-echo "<td>";	
-	
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	f($row);	
-	}
-echo"</td>";
-echo "<td>";
-echo"</td>";
+		echo "<td>";
+		echo"</td>";
 		
-		echo "</tr>";
-		
+	echo "</tr>";
 
-		echo "<tr>";	
-			
-		echo "</tr>";
-		echo "<tr>";
-	    	echo "<td>3:00 PM</td>";
-	echo "<td></td>";
-	echo "<td>";
+	echo "<tr>";
+		echo "<td>11:00 AM</td>";
+		echo "<td></td>";
+		
+		echo "<td>";
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "M", 11);	
+		}
+		echo"</td>";
 
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	m($row);	
-	}
-echo"</td>";
-echo "<td>";	
-	while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	t($row);	
-	}
-echo"</td>";
-echo "<td>";
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	w($row);	
-	}
-echo"</td>";
-echo "<td>";	    
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	r($row);	
-	}
-echo"</td>";
-echo "<td>";	
-	
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	f($row);	
-	}
-echo"</td>";
-echo "<td>";
-echo"</td>";
-		
-		echo "</tr>";
-		
+		echo "<td>";	
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "T", 11);	
+		}
+		echo"</td>";
 
-		echo "<tr>";	
-			
-		echo "</tr>";
-		echo "<tr>";
-	    	echo "<td>4:00 PM</td>";
-	echo "<td></td>";
-	echo "<td>";
+		echo "<td>";
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row,"W", 11);	
+		}
+		echo"</td>";
 
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	m($row);	
-	}
-echo"</td>";
-echo "<td>";	
-	while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	t($row);	
-	}
-echo"</td>";
-echo "<td>";
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	w($row);	
-	}
-echo"</td>";
-echo "<td>";	    
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	r($row);	
-	}
-echo"</td>";
-echo "<td>";	
-	
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	f($row);	
-	}
-echo"</td>";
-echo "<td>";
-echo"</td>";
-		
-		echo "</tr>";
-		
+		echo "<td>";	    
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "R", 11);	
+		}
+		echo"</td>";
 
-		echo "<tr>";
-			
-		echo "</tr>";
-		echo "<tr>";
-	    	echo "<td>6:00 PM</td>";
-	echo "<td></td>";
-	echo "<td>";
+		echo "<td>";	
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "F", 11);	
+		}
+		echo"</td>";
 
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	m($row);	
-	}
-echo"</td>";
-echo "<td>";	
-	while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	t($row);	
-	}
-echo"</td>";
-echo "<td>";
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	w($row);	
-	}
-echo"</td>";
-echo "<td>";	    
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	r($row);	
-	}
-echo"</td>";
-echo "<td>";	
-	
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	f($row);	
-	}
-echo"</td>";
-echo "<td>";
-echo"</td>";
+		echo "<td>";
+		echo"</td>";
 		
-		echo "</tr>";
-		
+	echo "</tr>";
 
-		echo "<tr>";	
-			
-		echo "</tr>";
-		echo "<tr>";
-	    	echo "<td>7:00 PM</td>";
-	echo "<td></td>";
-	echo "<td>";
+	echo "<tr>";
+		echo "<td>12:00 PM</td>";
+		echo "<td></td>";
+		
+		echo "<td>";
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "M", 12);	
+		}
+		echo"</td>";
 
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	m($row);	
-	}
-echo"</td>";
-echo "<td>";	
-	while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	t($row);	
-	}
-echo"</td>";
-echo "<td>";
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	w($row);	
-	}
-echo"</td>";
-echo "<td>";	    
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	r($row);	
-	}
-echo"</td>";
-echo "<td>";	
-	
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	f($row);	
-	}
-echo"</td>";
-echo "<td>";
-echo"</td>";
-		
-		echo "</tr>";
-		
+		echo "<td>";	
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "T", 12);	
+		}
+		echo"</td>";
 
-		echo "<tr>";
-			
-		echo "</tr>";
-		echo "<tr>";
-	    	echo "<td>8:00 PM</td>";
-	echo "<td></td>";
-	echo "<td>";
+		echo "<td>";
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row,"W", 12);	
+		}
+		echo"</td>";
 
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	m($row);	
-	}
-echo"</td>";
-echo "<td>";	
-	while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	t($row);	
-	}
-echo"</td>";
-echo "<td>";
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	w($row);	
-	}
-echo"</td>";
-echo "<td>";	    
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	r($row);	
-	}
-echo"</td>";
-echo "<td>";	
-	
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	f($row);	
-	}
-echo"</td>";
-echo "<td>";
-echo"</td>";
-		
-		echo "</tr>";
-		
+		echo "<td>";	    
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "R", 12);	
+		}
+		echo"</td>";
 
-		echo "<tr>";
-			
-		echo "</tr>";
-		echo "<tr>";
-	    	echo "echo <td>9:00 PM</td>";
-	echo "<td></td>";
-	echo "<td>";
+		echo "<td>";	
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "F", 12);	
+		}
+		echo"</td>";
 
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	m($row);	
-	}
-echo"</td>";
-echo "<td>";	
-	while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	t($row);	
-	}
-echo"</td>";
-echo "<td>";
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	w($row);	
-	}
-echo"</td>";
-echo "<td>";	    
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	r($row);	
-	}
-echo"</td>";
-echo "<td>";	
-	
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	f($row);	
-	}
-echo"</td>";
-echo "<td>";
-echo"</td>";
+		echo "<td>";
+		echo"</td>";
 		
-		echo "</tr>";
-		
+	echo "</tr>";
 
-		echo "<tr>";
-			
-		echo "</tr>";
-		echo "<tr>";
-	    	echo "<td>10:00 PM</td>";
-	echo "<td></td>";
-	echo "<td>";
+	echo "<tr>";
+		echo "<td>1:00 PM</td>";
+		echo "<td></td>";
+		
+		echo "<td>";
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "M", 13);	
+		}
+		echo"</td>";
 
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	m($row);	
-	}
-echo"</td>";
-echo "<td>";	
-	while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	t($row);	
-	}
-echo"</td>";
-echo "<td>";
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	w($row);	
-	}
-echo"</td>";
-echo "<td>";	    
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	r($row);	
-	}
-echo"</td>";
-echo "<td>";	
-	
-while($row=$result->fetchArray(SQLITE3_ASSOC)){
-	f($row);	
-	}
-echo"</td>";
-echo "<td>";
-echo"</td>";
-		
-		echo "</tr>";
-		
+		echo "<td>";	
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "T", 13);	
+		}
+		echo"</td>";
 
-		echo "<tr>";
-	
-		echo "</tr>";
+		echo "<td>";
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row,"W", 13);	
+		}
+		echo"</td>";
+
+		echo "<td>";	    
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "R", 13);	
+		}
+		echo"</td>";
+
+		echo "<td>";	
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "F", 13);	
+		}
+		echo"</td>";
+
+		echo "<td>";
+		echo"</td>";
 		
+	echo "</tr>";
+
+	echo "<tr>";
+		echo "<td>2:00 PM</td>";
+		echo "<td></td>";
+		
+		echo "<td>";
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "M", 14);	
+		}
+		echo"</td>";
+
+		echo "<td>";	
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "T", 14);	
+		}
+		echo"</td>";
+
+		echo "<td>";
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row,"W", 14);	
+		}
+		echo"</td>";
+
+		echo "<td>";	    
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "R", 14);	
+		}
+		echo"</td>";
+
+		echo "<td>";	
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "F", 14);	
+		}
+		echo"</td>";
+
+		echo "<td>";
+		echo"</td>";
+		
+	echo "</tr>";
+
+	echo "<tr>";
+		echo "<td>3:00 PM</td>";
+		echo "<td></td>";
+		
+		echo "<td>";
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "M", 15);	
+		}
+		echo"</td>";
+
+		echo "<td>";	
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "T", 15);	
+		}
+		echo"</td>";
+
+		echo "<td>";
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row,"W", 15);	
+		}
+		echo"</td>";
+
+		echo "<td>";	    
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "R", 15);	
+		}
+		echo"</td>";
+
+		echo "<td>";	
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "F", 15);	
+		}
+		echo"</td>";
+
+		echo "<td>";
+		echo"</td>";
+		
+	echo "</tr>";	
+
+	echo "<tr>";
+		echo "<td>4:00 PM</td>";
+		echo "<td></td>";
+		
+		echo "<td>";
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "M", 16);	
+		}
+		echo"</td>";
+
+		echo "<td>";	
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "T", 16);	
+		}
+		echo"</td>";
+
+		echo "<td>";
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row,"W", 16);	
+		}
+		echo"</td>";
+
+		echo "<td>";	    
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "R", 16);	
+		}
+		echo"</td>";
+
+		echo "<td>";	
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "F", 16);	
+		}
+		echo"</td>";
+
+		echo "<td>";
+		echo"</td>";
+		
+	echo "</tr>";
+
+	echo "<tr>";
+		echo "<td>5:00 PM</td>";
+		echo "<td></td>";
+		
+		echo "<td>";
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "M", 17);	
+		}
+		echo"</td>";
+
+		echo "<td>";	
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "T", 17);	
+		}
+		echo"</td>";
+
+		echo "<td>";
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row,"W", 17);	
+		}
+		echo"</td>";
+
+		echo "<td>";	    
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "R", 17);	
+		}
+		echo"</td>";
+
+		echo "<td>";	
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "F", 17);	
+		}
+		echo"</td>";
+
+		echo "<td>";
+		echo"</td>";
+		
+	echo "</tr>";
+
+	echo "<tr>";
+		echo "<td>6:00 PM</td>";
+		echo "<td></td>";
+		
+		echo "<td>";
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "M", 18);	
+		}
+		echo"</td>";
+
+		echo "<td>";	
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "T", 18);	
+		}
+		echo"</td>";
+
+		echo "<td>";
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row,"W", 18);	
+		}
+		echo"</td>";
+
+		echo "<td>";	    
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "R", 18);	
+		}
+		echo"</td>";
+
+		echo "<td>";	
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "F", 18);	
+		}
+		echo"</td>";
+
+		echo "<td>";
+		echo"</td>";
+		
+	echo "</tr>";
+
+	echo "<tr>";
+		echo "<td>7:00 PM</td>";
+		echo "<td></td>";
+		
+		echo "<td>";
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "M", 19);	
+		}
+		echo"</td>";
+
+		echo "<td>";	
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "T", 19);	
+		}
+		echo"</td>";
+
+		echo "<td>";
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row,"W", 19);	
+		}
+		echo"</td>";
+
+		echo "<td>";	    
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "R", 19);	
+		}
+		echo"</td>";
+
+		echo "<td>";	
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "F", 19);	
+		}
+		echo"</td>";
+
+		echo "<td>";
+		echo"</td>";
+		
+	echo "</tr>";
+
+	echo "<tr>";
+		echo "<td>8:00 PM</td>";
+		echo "<td></td>";
+		
+		echo "<td>";
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "M", 20);	
+		}
+		echo"</td>";
+
+		echo "<td>";	
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "T", 20);	
+		}
+		echo"</td>";
+
+		echo "<td>";
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row,"W", 20);	
+		}
+		echo"</td>";
+
+		echo "<td>";	    
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "R", 20);	
+		}
+		echo"</td>";
+
+		echo "<td>";	
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "F", 20);	
+		}
+		echo"</td>";
+
+		echo "<td>";
+		echo"</td>";
+		
+	echo "</tr>";
+
+	echo "<tr>";
+		echo "<td>9:00 PM</td>";
+		echo "<td></td>";
+		
+		echo "<td>";
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "M", 21);	
+		}
+		echo"</td>";
+
+		echo "<td>";	
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "T", 21);	
+		}
+		echo"</td>";
+
+		echo "<td>";
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row,"W", 21);	
+		}
+		echo"</td>";
+
+		echo "<td>";	    
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "R", 21);	
+		}
+		echo"</td>";
+
+		echo "<td>";	
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "F", 21);	
+		}
+		echo"</td>";
+
+		echo "<td>";
+		echo"</td>";
+		
+	echo "</tr>";
+
+	echo "<tr>";
+		echo "<td>10:00 PM</td>";
+		echo "<td></td>";
+		
+		echo "<td>";
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "M", 22);	
+		}
+		echo"</td>";
+
+		echo "<td>";	
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "T", 22);	
+		}
+		echo"</td>";
+
+		echo "<td>";
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row,"W", 22);	
+		}
+		echo"</td>";
+
+		echo "<td>";	    
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "R", 22);	
+		}
+		echo"</td>";
+
+		echo "<td>";	
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){
+			day($row, "F", 22);	
+		}
+		echo"</td>";
+
+		echo "<td>";
+		echo"</td>";
+		
+	echo "</tr>";
+
 	echo"</div>";
 
 
