@@ -1,5 +1,5 @@
 <html>
-<link rel="stylesheet" href="phpStyle.css">
+<link rel="stylesheet" href="phpStyles.css">
 <body>
 <?php
 $db = new SQLITE3('updated_classes');
@@ -102,11 +102,7 @@ while($row=$result->fetchArray(SQLITE3_ASSOC)){
 	  <h1 style="color:gold; font-family:Tahoma">Michigan Technological University Courses</h1>
 	</div>
 
-	<div class="topNavBar">
-	<a class="active" href="Home.html"style="font-family:Arial;">Home</a>
-	  <a href="Calendar.html"style="font-family:Arial">Calendar</a>
-	  <a href="CourseList.html"style="font-family:Arial">Course List</a>
-	  <a href="About.html"style="font-family:Arial">About</a>
+	<div class="slimHeader">
 	</div>
 
 </body>

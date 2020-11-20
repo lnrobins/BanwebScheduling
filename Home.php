@@ -1,9 +1,6 @@
-
-
-
 <!DOCTYPE html>
 <html>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="styleHP.css">
 <body>
 
 	<!-- Top black bar that houses the image and Title font -->
@@ -14,14 +11,10 @@
 
 
 	<!-- Top navigation bar that houses the buttons -->
-	<div class="topNavBar">
-	  <a class="active" href="Home.php"style="font-family:Arial;">Home</a>
-	  <a href="Calendar.html"style="font-family:Arial">Calendar</a>
-	  <a href="CourseList.html"style="font-family:Arial">Course List</a>
-	  <a href="About.html"style="font-family:Arial">About</a>
-	</div>
-
+	<div class="slimHeader">
 		
+	</div>
+	
 	<!-- Table for Weekly View Scheduler -->
 	<div class= "Class Scheduler">
 		<!--<h2 style="font-family:Tahoma"; >Class Scheduler</h2>-->
