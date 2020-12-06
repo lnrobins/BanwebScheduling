@@ -1,3 +1,10 @@
+
+<?php
+
+
+$_SESSION['Crns'] = array();
+?>
+
 <!DOCTYPE html>
 <html>
 <link rel="stylesheet" href="styleHP.css">
@@ -8,13 +15,11 @@
 	<img src="https://www.mtu.edu/mtu_resources/images/download-central/logos/husky-icon/thumb.png" style="width:250px;height:100px;float:left;">
 	  <h1 style="color:gold; font-family:Tahoma">Michigan Technological University Class Scheduler</h1>
 	</div>
-
-
-	<!-- Top navigation bar that houses the buttons -->
+	
 	<div class="slimHeader">
 		
 	</div>
-	
+		
 	<!-- Table for Weekly View Scheduler -->
 	<div class= "Class Scheduler">
 		<!--<h2 style="font-family:Tahoma"; >Class Scheduler</h2>-->
@@ -22,46 +27,82 @@
 $db = new SQLITE3('updated_classes');
 $sql = "SELECT * from classes where CRN ='" . $_GET['crn'] . "'";
 $result = $db->query($sql);
+$i = 0;
+
 
 include 'conflictNotification.php';
 
-function day($row, $day, $time){
-	
+function am($row, $day, $time,$period){
+
 	if( $row['time'] != "TBA" ) {
 		
 		$times = $row['time'];
-
+		
 		$timeArray = explode("-", $times);
-
 		$startTimeArray = explode(" ", $timeArray[0]);
 		$startTime = getTime($startTimeArray);
 		$startTime = floor($startTime/4);
 
+		
+		
 		$endTimeArray = explode(" ", $timeArray[1]);
+		$periods = explode(" ", $timeArray[1]);
+		$p2 = explode(" ", $timeArray[0]);
 		$endTime = getTime($endTimeArray);
 		$endTime = ceil($endTime/4);		
-
 		$arr = str_split($row['days']);
 		for($i = 0; $i< sizeof($arr); $i++){
 			$classList = array();
-			if(conflicts($classList, $row['CRN']) && $arr[$i] == $day && $time >= $startTime && $time < $endTime ){
-				echo $row['CRN'];
-				echo " ";
-				echo $row['section'];
-				echo " ";
-				echo $row['credits'];
-				echo " ";
+
+			if(conflicts($classList, $row['CRN']) && $arr[$i] == $day && $time >= $startTime && $time < $endTime && ($period == $periods[1] || $period == $p2[1]) ){
+	
 				echo $row['title'];
 				echo " ";
 				echo $row['instructor'];
 				echo " ";
-				echo $row['date'];
-				echo " ";
-				echo $row['location'];
+				echo $row['time'];
 			}
+			
 		}
 	}
 }
+
+function pm($row, $day, $time,$period){
+
+	if( $row['time'] != "TBA" ) {
+		
+		$times = $row['time'];
+		
+		$timeArray = explode("-", $times);
+		$startTimeArray = explode(" ", $timeArray[0]);
+		$startTime = getTime($startTimeArray);
+		$startTime = floor($startTime/4);
+
+		
+		
+		$endTimeArray = explode(" ", $timeArray[1]);
+		$periods = explode(" ", $timeArray[1]);
+		$p2 = explode(" ", $timeArray[0]);
+		$endTime = getTime($endTimeArray);
+		$endTime = ceil($endTime/4);		
+		
+		$arr = str_split($row['days']);
+		for($i = 0; $i< sizeof($arr); $i++){
+			$classList = array();
+
+			if(conflicts($classList, $row['CRN']) && $arr[$i] == $day && $time >= $startTime && $time < $endTime && ($period == $periods[1] || $period == $p2[1]) ){
+	
+				echo $row['title'];
+				echo " ";
+				echo $row['instructor'];
+				echo " ";
+				echo $row['time'];
+			}
+			
+		}
+	}
+}
+
 
 echo"<table>";
 	
@@ -77,37 +118,45 @@ echo"<table>";
 	echo "<th>Saturday</th>";
 	echo "</tr>";
 	
+	
+
+
 	echo "<tr>";
 		echo "<td>6:00 AM</td>";
 		echo "<td></td>";
 		
 		echo "<td>";
-		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "M", 6);	
+
+		
+		while($row=$result->fetchArray(SQLITE3_ASSOC)){	
+				am($row, "M", 6,"am");		
 		}
+
+
 		echo"</td>";
 
 		echo "<td>";	
+
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "T", 6);	
+				am($row, "T", 6,"am");	
 		}
 		echo"</td>";
 
 		echo "<td>";
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row,"W", 6);	
+			am($row,"W", 6,"am");	
 		}
 		echo"</td>";
 
 		echo "<td>";	    
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "R", 6);	
+			am($row, "R", 6,"am");	
 		}
 		echo"</td>";
 
 		echo "<td>";	
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "F", 6);	
+			am($row, "F", 6,"am");	
 		}
 		echo"</td>";
 
@@ -115,38 +164,38 @@ echo"<table>";
 		echo"</td>";
 		
 	echo "</tr>";
-	
+
 	echo "<tr>";
 		echo "<td>7:00 AM</td>";
 		echo "<td></td>";
 		
 		echo "<td>";
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "M", 7);	
+			am($row, "M", 7,"am");	
 		}
 		echo"</td>";
 
 		echo "<td>";	
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "T", 7);	
+			am($row, "T", 7,"am");	
 		}
 		echo"</td>";
 
 		echo "<td>";
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row,"W", 7);	
+			am($row,"W", 7,"am");	
 		}
 		echo"</td>";
 
 		echo "<td>";	    
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "R", 7);	
+			am($row, "R", 7,"am");	
 		}
 		echo"</td>";
 
 		echo "<td>";	
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "F", 7);	
+			am($row, "F", 7,"am");	
 		}
 		echo"</td>";
 
@@ -161,31 +210,31 @@ echo"<table>";
 		
 		echo "<td>";
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "M", 8);	
+			am($row, "M", 8,"am");	
 		}
 		echo"</td>";
 
 		echo "<td>";	
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "T", 8);	
+			am($row, "T", 8,"am");	
 		}
 		echo"</td>";
 
 		echo "<td>";
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row,"W", 8);	
+			am($row,"W", 8,"am");	
 		}
 		echo"</td>";
 
 		echo "<td>";	    
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "R", 8);	
+			am($row, "R", 8,"am");	
 		}
 		echo"</td>";
 
 		echo "<td>";	
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "F", 8);	
+			am($row, "F", 8,"am");	
 		}
 		echo"</td>";
 
@@ -193,6 +242,7 @@ echo"<table>";
 		echo"</td>";
 		
 	echo "</tr>";
+
 
 	echo "<tr>";
 		echo "<td>9:00 AM</td>";
@@ -200,31 +250,31 @@ echo"<table>";
 		
 		echo "<td>";
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "M", 9);	
+			am($row, "M", 9,"am");	
 		}
 		echo"</td>";
 
 		echo "<td>";	
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "T", 9);	
+			am($row, "T", 9,"am");	
 		}
 		echo"</td>";
 
 		echo "<td>";
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row,"W", 9);	
+			am($row,"W", 9,"am");	
 		}
 		echo"</td>";
 
 		echo "<td>";	    
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "R", 9);	
+			am($row, "R", 9,"am");	
 		}
 		echo"</td>";
 
 		echo "<td>";	
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "F", 9);	
+			am($row, "F", 9,"am");	
 		}
 		echo"</td>";
 
@@ -232,6 +282,7 @@ echo"<table>";
 		echo"</td>";
 		
 	echo "</tr>";
+
 
 	echo "<tr>";
 		echo "<td>10:00 AM</td>";
@@ -239,31 +290,31 @@ echo"<table>";
 		
 		echo "<td>";
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "M", 10);	
+			am($row, "M", 10,"am");	
 		}
 		echo"</td>";
 
 		echo "<td>";	
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "T", 10);	
+			am($row, "T", 10,"am");	
 		}
 		echo"</td>";
 
 		echo "<td>";
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row,"W", 10);	
+			am($row,"W", 10,"am");	
 		}
 		echo"</td>";
 
 		echo "<td>";	    
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "R", 10);	
+			am($row, "R", 10,"am");	
 		}
 		echo"</td>";
 
 		echo "<td>";	
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "F", 10);	
+			am($row, "F", 10,"am");	
 		}
 		echo"</td>";
 
@@ -271,6 +322,7 @@ echo"<table>";
 		echo"</td>";
 		
 	echo "</tr>";
+
 
 	echo "<tr>";
 		echo "<td>11:00 AM</td>";
@@ -278,31 +330,31 @@ echo"<table>";
 		
 		echo "<td>";
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "M", 11);	
+			am($row, "M", 11,"am");	
 		}
 		echo"</td>";
 
 		echo "<td>";	
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "T", 11);	
+			am($row, "T", 11,"am");	
 		}
 		echo"</td>";
 
 		echo "<td>";
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row,"W", 11);	
+			am($row,"W", 11,"am");	
 		}
 		echo"</td>";
 
 		echo "<td>";	    
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "R", 11);	
+			am($row, "R", 11,"am");	
 		}
 		echo"</td>";
 
 		echo "<td>";	
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "F", 11);	
+			am($row, "F", 11,"am");	
 		}
 		echo"</td>";
 
@@ -310,6 +362,8 @@ echo"<table>";
 		echo"</td>";
 		
 	echo "</tr>";
+
+	
 
 	echo "<tr>";
 		echo "<td>12:00 PM</td>";
@@ -317,31 +371,31 @@ echo"<table>";
 		
 		echo "<td>";
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "M", 12);	
+			pm($row, "M", 12,"pm");	
 		}
 		echo"</td>";
 
 		echo "<td>";	
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "T", 12);	
+			pm($row, "T", 12,"pm");	
 		}
 		echo"</td>";
 
 		echo "<td>";
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row,"W", 12);	
+			pm($row,"W", 12,"pm");	
 		}
 		echo"</td>";
 
 		echo "<td>";	    
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "R", 12);	
+			pm($row, "R", 12,"pm");	
 		}
 		echo"</td>";
 
 		echo "<td>";	
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "F", 12);	
+			pm($row, "F", 12,"pm");	
 		}
 		echo"</td>";
 
@@ -349,6 +403,7 @@ echo"<table>";
 		echo"</td>";
 		
 	echo "</tr>";
+
 
 	echo "<tr>";
 		echo "<td>1:00 PM</td>";
@@ -356,31 +411,31 @@ echo"<table>";
 		
 		echo "<td>";
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "M", 13);	
+			pm($row, "M", 1,"pm");	
 		}
 		echo"</td>";
 
 		echo "<td>";	
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "T", 13);	
+			pm($row, "T", 1,"pm");	
 		}
 		echo"</td>";
 
 		echo "<td>";
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row,"W", 13);	
+			pm($row,"W", 1,"pm");	
 		}
 		echo"</td>";
 
 		echo "<td>";	    
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "R", 13);	
+			pm($row, "R", 1,"pm");	
 		}
 		echo"</td>";
 
 		echo "<td>";	
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "F", 13);	
+			pm($row, "F", 1,"pm");	
 		}
 		echo"</td>";
 
@@ -388,6 +443,8 @@ echo"<table>";
 		echo"</td>";
 		
 	echo "</tr>";
+
+
 
 	echo "<tr>";
 		echo "<td>2:00 PM</td>";
@@ -395,31 +452,31 @@ echo"<table>";
 		
 		echo "<td>";
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "M", 14);	
+			pm($row, "M", 2,"pm");	
 		}
 		echo"</td>";
 
 		echo "<td>";	
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "T", 14);	
+			pm($row, "T", 2,"pm");	
 		}
 		echo"</td>";
 
 		echo "<td>";
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row,"W", 14);	
+			pm($row,"W", 2,"pm");	
 		}
 		echo"</td>";
 
 		echo "<td>";	    
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "R", 14);	
+			pm($row, "R", 2,"pm");	
 		}
 		echo"</td>";
 
 		echo "<td>";	
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "F", 14);	
+			pm($row, "F", 2,"pm");	
 		}
 		echo"</td>";
 
@@ -428,37 +485,40 @@ echo"<table>";
 		
 	echo "</tr>";
 
+	
+	
+
 	echo "<tr>";
 		echo "<td>3:00 PM</td>";
 		echo "<td></td>";
 		
 		echo "<td>";
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "M", 15);	
+			pm($row, "M", 3,"pm");	
 		}
 		echo"</td>";
 
 		echo "<td>";	
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "T", 15);	
+			pm($row, "T", 3,"pm");	
 		}
 		echo"</td>";
 
 		echo "<td>";
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row,"W", 15);	
+			pm($row,"W", 3,"pm");	
 		}
 		echo"</td>";
 
 		echo "<td>";	    
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "R", 15);	
+			pm($row, "R", 3,"pm");	
 		}
 		echo"</td>";
 
 		echo "<td>";	
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "F", 15);	
+			pm($row, "F", 3,"pm");	
 		}
 		echo"</td>";
 
@@ -467,37 +527,40 @@ echo"<table>";
 		
 	echo "</tr>";	
 
+	
+
+
 	echo "<tr>";
 		echo "<td>4:00 PM</td>";
 		echo "<td></td>";
 		
 		echo "<td>";
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "M", 16);	
+			pm($row, "M", 4,"pm");	
 		}
 		echo"</td>";
 
 		echo "<td>";	
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "T", 16);	
+			pm($row, "T", 4,"pm");	
 		}
 		echo"</td>";
 
 		echo "<td>";
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row,"W", 16);	
+			pm($row,"W", 4,"pm");	
 		}
 		echo"</td>";
 
 		echo "<td>";	    
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "R", 16);	
+			pm($row, "R", 4,"pm");	
 		}
 		echo"</td>";
 
 		echo "<td>";	
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "F", 16);	
+			pm($row, "F", 4,"pm");	
 		}
 		echo"</td>";
 
@@ -505,6 +568,8 @@ echo"<table>";
 		echo"</td>";
 		
 	echo "</tr>";
+
+	
 
 	echo "<tr>";
 		echo "<td>5:00 PM</td>";
@@ -512,31 +577,31 @@ echo"<table>";
 		
 		echo "<td>";
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "M", 17);	
+			pm($row, "M", 5,"pm");	
 		}
 		echo"</td>";
 
 		echo "<td>";	
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "T", 17);	
+			pm($row, "T", 5,"pm");	
 		}
 		echo"</td>";
 
 		echo "<td>";
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row,"W", 17);	
+			pm($row,"W", 5,"pm");	
 		}
 		echo"</td>";
 
 		echo "<td>";	    
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "R", 17);	
+			pm($row, "R", 5,"pm");	
 		}
 		echo"</td>";
 
 		echo "<td>";	
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "F", 17);	
+			pm($row, "F", 5,"pm");	
 		}
 		echo"</td>";
 
@@ -544,6 +609,7 @@ echo"<table>";
 		echo"</td>";
 		
 	echo "</tr>";
+
 
 	echo "<tr>";
 		echo "<td>6:00 PM</td>";
@@ -551,31 +617,31 @@ echo"<table>";
 		
 		echo "<td>";
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "M", 18);	
+			pm($row, "M", 6,"pm");	
 		}
 		echo"</td>";
 
 		echo "<td>";	
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "T", 18);	
+			pm($row, "T", 6,"pm");	
 		}
 		echo"</td>";
 
 		echo "<td>";
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row,"W", 18);	
+			pm($row,"W", 6,"pm");	
 		}
 		echo"</td>";
 
 		echo "<td>";	    
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "R", 18);	
+			pm($row, "R", 6,"pm");	
 		}
 		echo"</td>";
 
 		echo "<td>";	
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "F", 18);	
+			pm($row, "F", 6,"pm");	
 		}
 		echo"</td>";
 
@@ -583,6 +649,8 @@ echo"<table>";
 		echo"</td>";
 		
 	echo "</tr>";
+
+
 
 	echo "<tr>";
 		echo "<td>7:00 PM</td>";
@@ -590,31 +658,31 @@ echo"<table>";
 		
 		echo "<td>";
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "M", 19);	
+			pm($row, "M", 7,"pm");	
 		}
 		echo"</td>";
 
 		echo "<td>";	
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "T", 19);	
+			pm($row, "T", 7,"pm");	
 		}
 		echo"</td>";
 
 		echo "<td>";
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row,"W", 19);	
+			pm($row,"W", 7,"pm");	
 		}
 		echo"</td>";
 
 		echo "<td>";	    
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "R", 19);	
+			pm($row, "R", 7,"pm");	
 		}
 		echo"</td>";
 
 		echo "<td>";	
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "F", 19);	
+			pm($row, "F", 7,"pm");	
 		}
 		echo"</td>";
 
@@ -622,6 +690,7 @@ echo"<table>";
 		echo"</td>";
 		
 	echo "</tr>";
+
 
 	echo "<tr>";
 		echo "<td>8:00 PM</td>";
@@ -629,31 +698,31 @@ echo"<table>";
 		
 		echo "<td>";
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "M", 20);	
+			pm($row, "M", 8,"pm");	
 		}
 		echo"</td>";
 
 		echo "<td>";	
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "T", 20);	
+			pm($row, "T", 8,"pm");	
 		}
 		echo"</td>";
 
 		echo "<td>";
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row,"W", 20);	
+			pm($row,"W", 8,"pm");	
 		}
 		echo"</td>";
 
 		echo "<td>";	    
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "R", 20);	
+			pm($row, "R", 8,"pm");	
 		}
 		echo"</td>";
 
 		echo "<td>";	
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "F", 20);	
+			pm($row, "F", 8,"pm");	
 		}
 		echo"</td>";
 
@@ -661,6 +730,7 @@ echo"<table>";
 		echo"</td>";
 		
 	echo "</tr>";
+
 
 	echo "<tr>";
 		echo "<td>9:00 PM</td>";
@@ -668,31 +738,31 @@ echo"<table>";
 		
 		echo "<td>";
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "M", 21);	
+			pm($row, "M", 9,"pm");	
 		}
 		echo"</td>";
 
 		echo "<td>";	
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "T", 21);	
+			pm($row, "T", 9,"pm");	
 		}
 		echo"</td>";
 
 		echo "<td>";
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row,"W", 21);	
+			pm($row,"W", 9,"pm");	
 		}
 		echo"</td>";
 
 		echo "<td>";	    
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "R", 21);	
+			pm($row, "R", 9,"pm");	
 		}
 		echo"</td>";
 
 		echo "<td>";	
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "F", 21);	
+			pm($row, "F", 9,"pm");	
 		}
 		echo"</td>";
 
@@ -701,37 +771,38 @@ echo"<table>";
 		
 	echo "</tr>";
 
+
 	echo "<tr>";
 		echo "<td>10:00 PM</td>";
 		echo "<td></td>";
 		
 		echo "<td>";
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "M", 22);	
+			pm($row, "M", 10,"pm");	
 		}
 		echo"</td>";
 
 		echo "<td>";	
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "T", 22);	
+			pm($row, "T", 10,"pm");	
 		}
 		echo"</td>";
 
 		echo "<td>";
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row,"W", 22);	
+			pm($row,"W", 10,"pm");	
 		}
 		echo"</td>";
 
 		echo "<td>";	    
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "R", 22);	
+			pm($row, "R", 10,"pm");	
 		}
 		echo"</td>";
 
 		echo "<td>";	
 		while($row=$result->fetchArray(SQLITE3_ASSOC)){
-			day($row, "F", 22);	
+			pm($row, "F", 10,"pm");	
 		}
 		echo"</td>";
 
@@ -824,13 +895,7 @@ echo"<table>";
 	<br>
 	<bv>
 	<br>
-	<br>
-	<br>
-	<bv>
-	<br>
 	<br> <!-- Spacing for formatting -->
-	<br>
-	
 	<br>
 
 	<div style="float:left;">
@@ -865,13 +930,26 @@ echo"<table>";
 		
 		</div>
 	</form>
+	
+	</form>
 
-<form action=''>
-		<input type='submit' value='Reset'>
+		<form action='SavingTable.php'>
+		<input type="hidden" id="datatodisplay" name="datatodisplay">
+		<input type='submit' value='Export Course Calendar'>
 		<session_unset()>
 		</div>
 	</form>
 
+	<form action='Home.php' value = "<?php echo isset($_POST['name']) ? htmlspecialchars($_POST['name'], ENT_QUOTES) : ''; ?> > 
+	
+		<div style="float:left";>
+		<input type='submit' value='Reset'>
+		
+		</div>
+	</form>
+
+	<br>
+	<br>
 	<br>
 	<br>
 	<br>
